@@ -15,11 +15,13 @@ package org.openmrs.module.openhmis.cashier.api.model;
 
 import java.math.BigDecimal;
 
+/**
+ * Model class that give the options a {@link org.openmrs.Person} (Cashier) has.
+ */
 public class CashierOptions {
 	public static final long serialVersionUID = 0L;
 
-	private static final BigDecimal DEFAULT_NO_ROUNDING = BigDecimal.ZERO;
-	private BigDecimal roundToNearest = DEFAULT_NO_ROUNDING;
+	private Integer roundToNearest = 0;
 	private RoundingMode roundingMode = RoundingMode.MID;
 	private String roundingItemUuid;
 	private int defaultReceiptReportId;
@@ -28,44 +30,47 @@ public class CashierOptions {
 	public String getRoundingItemUuid() {
 		return roundingItemUuid;
 	}
-	
+
 	public void setRoundingItemUuid(String roundingItemUuid) {
 		this.roundingItemUuid = roundingItemUuid;
 	}
-	
+
 	// Getters & setters
-	public BigDecimal getRoundToNearest() {
+	public Integer getRoundToNearest() {
 		return roundToNearest;
 	}
-	
-	public void setRoundToNearest(BigDecimal roundToNearest) {
+
+	public void setRoundToNearest(Integer roundToNearest) {
 		this.roundToNearest = roundToNearest;
 	}
-	
+
 	public RoundingMode getRoundingMode() {
 		return roundingMode;
 	}
-	
+
 	public void setRoundingMode(RoundingMode roundingMode) {
 		this.roundingMode = roundingMode;
 	}
-	
+
 	public int getDefaultReceiptReportId() {
 		return defaultReceiptReportId;
 	}
-	
+
 	public void setDefaultReceiptReportId(int defaultReceiptReportId) {
 		this.defaultReceiptReportId = defaultReceiptReportId;
 	}
-	
+
 	public boolean isTimesheetRequired() {
 		return timesheetRequired;
 	}
-	
+
 	public void setTimesheetRequired(boolean timesheetRequired) {
 		this.timesheetRequired = timesheetRequired;
 	}
-	
+
+	/**
+	 * Defines the collection of constants to be used for setting the rounding mode
+	 */
 	public enum RoundingMode {
 		FLOOR(1), MID(2), CEILING(3);
 
