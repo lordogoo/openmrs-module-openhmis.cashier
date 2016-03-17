@@ -46,7 +46,7 @@ public class ICashierOptionsServiceTest extends BaseModuleContextSensitiveTest {
 		Assert.assertEquals("4028814B399565AA01399681B1B5000E", options.getRoundingItemUuid());
 		Assert.assertEquals(3, options.getDefaultReceiptReportId());
 		Assert.assertEquals(CashierOptions.RoundingMode.MID, options.getRoundingMode());
-		Assert.assertTrue(new BigDecimal(5).equals(options.getRoundToNearest()));
+		Assert.assertEquals(5, (int)options.getRoundToNearest());
 		Assert.assertEquals(true, options.isTimesheetRequired());
 	}
 
@@ -56,7 +56,7 @@ public class ICashierOptionsServiceTest extends BaseModuleContextSensitiveTest {
 	 */
 	@Test
 	public void getOptions_shouldRevertToDefaultsIfThereAreProblemsLoadingOptions()
-			throws Exception {
+	        throws Exception {
 		executeDataSet(OPTIONS_DATASET_INVALID);
 		CashierOptions reference = new CashierOptions();
 		CashierOptions options = cashierOptionsService.getOptions();
