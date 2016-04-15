@@ -13,37 +13,35 @@
  */
 package org.openmrs.module.openhmis.cashier.web.controller;
 
-import org.openmrs.Privilege;
-import org.openmrs.api.UserService;
-import org.openmrs.module.openhmis.cashier.api.util.PrivilegeConstants;
+import org.openmrs.module.openhmis.cashier.api.ISequentialReceiptNumberGeneratorService;
 import org.openmrs.module.openhmis.cashier.web.CashierWebConstants;
-import org.openmrs.module.openhmis.commons.web.controller.RoleCreationControllerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.Set;
-
 /**
- * Controller to manage the Cashier Role Creation page.
+ * Contorller to manage the Sequential Receipt Number Generation
  */
 @Controller
-@RequestMapping(CashierWebConstants.CASHIER_ROLE_ROOT)
-public class CashierRoleController extends RoleCreationControllerBase {
-	private UserService userService;
+@RequestMapping(value = SequentialReceiptNumberGenerator2xController.SEQ_RECEIPT_NUMBER_GENERATOR_URL)
+public class SequentialReceiptNumberGenerator2xController extends AbstractSequentialReceiptNumberGenerator {
+
+	public static final String SEQ_RECEIPT_NUMBER_GENERATOR_URL = CashierWebConstants.SEQ_RECEIPT_NUMBER_GENERATOR_PAGE_2X;
+
+	private ISequentialReceiptNumberGeneratorService service;
 
 	@Autowired
-	public CashierRoleController(UserService userService) {
-		this.userService = userService;
+	public SequentialReceiptNumberGenerator2xController(ISequentialReceiptNumberGeneratorService service) {
+		this.service = service;
 	}
 
 	@Override
-	public UserService getUserService() {
-		return this.userService;
+	public ISequentialReceiptNumberGeneratorService getService() {
+		return this.service;
 	}
 
 	@Override
-	public Set<Privilege> privileges() {
-		return PrivilegeConstants.getDefaultPrivileges();
+	public String getReceiptNumberGeneratorUrl() {
+		return SEQ_RECEIPT_NUMBER_GENERATOR_URL;
 	}
 }
