@@ -14,6 +14,7 @@
 package org.openmrs.module.webservices.rest.resource;
 
 import com.google.common.collect.Iterators;
+import org.openmrs.Location;
 import org.openmrs.Provider;
 import org.openmrs.User;
 import org.openmrs.api.AdministrationService;
@@ -29,14 +30,21 @@ import org.openmrs.module.openhmis.cashier.api.model.Payment;
 import org.openmrs.module.openhmis.cashier.api.model.CashPoint;
 import org.openmrs.module.openhmis.cashier.api.model.Timesheet;
 import org.openmrs.module.openhmis.cashier.api.util.RoundingUtil;
+import org.openmrs.module.openhmis.commons.api.PagingInfo;
 import org.openmrs.module.openhmis.commons.api.entity.IEntityDataService;
+import org.openmrs.module.openhmis.inventory.api.IStockroomDataService;
+import org.openmrs.module.openhmis.inventory.api.model.Stockroom;
+import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.RefRepresentation;
 import org.openmrs.module.webservices.rest.web.representation.Representation;
+import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
 import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
+import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
+import org.openmrs.util.OpenmrsConstants;
 import org.springframework.web.client.RestClientException;
 
 import java.util.ArrayList;
@@ -60,6 +68,7 @@ public class BillResource extends BaseRestDataResource<Bill> {
 			description.addProperty("cashPoint", Representation.REF);
 			description.addProperty("cashier", Representation.REF);
 			description.addProperty("lineItems");
+			description.addProperty("keepitems");
 			description.addProperty("patient", Representation.REF);
 			description.addProperty("payments", Representation.FULL);
 			description.addProperty("receiptNumber");
@@ -83,6 +92,13 @@ public class BillResource extends BaseRestDataResource<Bill> {
 		BaseRestDataResource.syncCollection(instance.getLineItems(), lineItems);
 		for (BillLineItem item : instance.getLineItems()) {
 			item.setBill(instance);
+		}
+	}
+
+	@PropertySetter("keepitems")
+	public void setKeepItems(Bill instance, List<BillLineItem> keepitems) {
+		for (int i = 0; i < keepitems.size(); i++) {
+			instance.getBillAdjusted().getLineItems().remove(keepitems.get(i));
 		}
 	}
 
@@ -160,6 +176,21 @@ public class BillResource extends BaseRestDataResource<Bill> {
 
 	public String getDisplayString(Bill instance) {
 		return instance.getReceiptNumber();
+	}
+
+	/*
+	    added per kmri 768
+
+	 */
+	@Override
+	protected NeedsPaging<Bill> doGetAll(RequestContext context) {
+
+		String loc = Context.getAuthenticatedUser().getUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION);
+		Location ltemp = Context.getLocationService().getLocation(Integer.parseInt(loc));
+		PagingInfo pagingInfo = PagingUtil.getPagingInfoFromContext(context);
+
+		return new NeedsPaging<Bill>(Context.getService(IBillService.class).getBillsByLocation(
+		    ltemp, false, pagingInfo), context);
 	}
 
 	@Override

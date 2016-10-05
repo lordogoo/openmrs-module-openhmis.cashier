@@ -136,7 +136,8 @@ curl(
 			// Automatic receipt printing
 			if (openhmis.getQueryStringParameter("print") === "true") {
 				this.billView.printReceipt();
-				$("#printReceipt").attr("disabled", "disabled");
+				//removed via kmri 784. this causes the form to be only printable once before it can be reloaded.
+				//$("#printReceipt").attr("disabled", "disabled");
 			}
 			
 			// Patient View
@@ -178,13 +179,16 @@ curl(
 					$printButton.show();
 					
 					if (this.billView.bill.get("billAdjusted")) {
+						//todo edit
 						adjustedBillView = new openhmis.BillAndPaymentsView({
+							bill: this.billView,
 							model: this.billView.bill.get("billAdjusted")
 						});
 						$("#patient-view").after(adjustedBillView.el).addClass("combineBoxes");
 						adjustedBillView.render();
 						$("#bill").appendTo(adjustedBillView.$el);
 						this.billView.options.listTitle = __("Adjustments");
+						this.billView.adjustedBillView = adjustedBillView;
 					}
 					
 					// Provide cash point select, if this option is enabled
@@ -195,6 +199,7 @@ curl(
 					break;
 				case BillStatus.POSTED:
 				case BillStatus.PAID:
+				case BillStatus.OVERPAID:
 					var $allowBillAdjustment = $('#allowBillAdjustment');
 					if ($allowBillAdjustment.val() == 'true'){
 						$saveButton.val(__(openhmis.getMessage('openhmis.cashier.bill.adjustBill')));
@@ -205,7 +210,8 @@ curl(
 					$printButton.val(__(openhmis.getMessage('openhmis.cashier.bill.printReceipt')));
 					$printButton.click(function (event) {
 						self.billView.printReceipt(event);
-						$(this).attr("disabled", "disabled");
+						// removed via kmri 784
+						//$(this).attr("disabled", "disabled");
 					});
 					$printButton.show();
 					break;

@@ -24,10 +24,12 @@ define(
 		openhmis.PaymentListItemView = openhmis.GenericListItemView.extend({
 			render: function() {
 				openhmis.GenericListItemView.prototype.render.call(this);
+
 				var detailsTemplate = this.getTemplate(
 					openhmis.url.cashierBase + 'template/payment.html',
 					"#payment-attributes"
 				);
+
 				this.$("td.field-Details").html(detailsTemplate({ attributes: this.model.get("attributes") }));
 				return this;
 			}
@@ -56,7 +58,7 @@ define(
 					itemView: openhmis.PaymentListItemView,
 					id: "paymentList",
 					className: "paymentList",
-					listFields: ['dateCreatedFmt', 'attributes', 'amountTenderedFmt', 'amountFmt', 'instanceType'],
+					listFields: ['dateCreatedFmt', /* 'attributes',*/ 'amountTenderedFmt', 'amountFmt' ,'instanceType' ],
 					showRetiredOption: false,
 					showPaging: false,
 					hideIfEmpty: true

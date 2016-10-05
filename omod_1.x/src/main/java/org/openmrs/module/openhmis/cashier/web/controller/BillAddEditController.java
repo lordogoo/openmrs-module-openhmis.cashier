@@ -15,6 +15,7 @@ package org.openmrs.module.openhmis.cashier.web.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.api.APIException;
@@ -31,6 +32,7 @@ import org.openmrs.module.openhmis.cashier.api.util.PrivilegeConstants;
 import org.openmrs.module.openhmis.cashier.api.util.TimesheetUtil;
 import org.openmrs.module.openhmis.cashier.web.CashierWebConstants;
 import org.openmrs.module.openhmis.commons.api.util.UrlUtil;
+import org.openmrs.util.OpenmrsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -64,6 +66,7 @@ public class BillAddEditController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String bill(ModelMap model, @RequestParam(value = "billUuid", required = false) String billUuid,
 	        @RequestParam(value = "patientUuid", required = false) String patientUuid, HttpServletRequest request) {
+		System.out.println("bill get");
 		Timesheet timesheet = null;
 		try {
 			timesheet = TimesheetUtil.getCurrentTimesheet();
@@ -80,6 +83,9 @@ public class BillAddEditController {
 
 		model.addAttribute("timesheet", timesheet);
 		model.addAttribute("user", Context.getAuthenticatedUser());
+		String loc = Context.getAuthenticatedUser().getUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION);
+		Location ltemp = Context.getLocationService().getLocation(Integer.parseInt(loc));
+		model.addAttribute("location", ltemp);
 		model.addAttribute("url", buildUrlModelAttribute(request));
 
 		boolean showAdjustmentReasonField = Boolean.parseBoolean(adminService.getGlobalProperty(

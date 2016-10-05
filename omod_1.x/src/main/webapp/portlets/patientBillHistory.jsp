@@ -37,8 +37,9 @@
 					"${bill.dateCreated}",
 					'<a href="<openmrs:contextPath />/module/openhmis/cashier/bill.form?billUuid=${bill.uuid}">${bill.receiptNumber}</a>',
 							"${bill.status}",
-							"${bill.amountPaid}",
-							"${bill.total}"
+							"${bill.total}",
+							"${paid[varStatus.index]}",
+							"${balance[varStatus.index]}"
 				]
 				</c:forEach>
 			],
@@ -47,8 +48,9 @@
 				{ sTitle: "<openmrs:message code="openhmis.cashier.bill.createdOn" />" },
 				{ sTitle: "<openmrs:message code="openhmis.cashier.bill.receiptNumber" />" },
 				{ sTitle: "<openmrs:message code="openhmis.cashier.bill.status" />" },
+				{ sTitle: "<openmrs:message code="openhmis.cashier.bill.totalDue" />" },
 				{ sTitle: "<openmrs:message code="openhmis.cashier.bill.totalPaid" />" },
-				{ sTitle: "<openmrs:message code="openhmis.cashier.bill.totalAmount" />" }
+				{ sTitle: "<openmrs:message code="openhmis.cashier.bill.totalBalance" />" }
 			]
 		});
 	});

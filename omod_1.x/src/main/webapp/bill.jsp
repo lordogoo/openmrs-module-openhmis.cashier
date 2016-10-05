@@ -17,8 +17,36 @@
 
 <%-- Force our newer jquery version to load first --%>
 <%@ include file="/WEB-INF/template/header.jsp"%>
-<openmrs:htmlInclude file="/moduleResources/openhmis/backboneforms/js/lib/jquery.js" />
 <%@ include file="template/localHeader.jsp"%>
+
+<style>
+.field-quantity{
+	text-align: center;
+}
+input[name=quantity]{
+	text-align: center;
+}
+.field-price{
+	text-align: center;
+}
+.field-total{
+	text-align: center;
+}
+input[name=total]{
+	text-align: center;
+}
+.field-amountTenderedFmt{
+	text-align: right;
+}
+.field-amountFmt{
+   	text-align: right;
+}
+.field-instanceType{
+	text-align: right;
+	width: 10%;
+}
+</style>
+
 <openmrs:htmlInclude file="/moduleResources/openhmis/cashier/js/screen/bill.js" />
 <h2>
 	<c:choose>
@@ -66,10 +94,12 @@
 <c:choose>
 	<c:when test="${!empty bill}">
 		<li class="cashier"><span class="label"><openmrs:message code="openhmis.cashier.cashier.name"/>:</span> ${bill.cashier.person.personName}</li>
-		<li class="date"><span class="label"><openmrs:message code="openhmis.cashier.date"/>: </span> ${bill.dateCreated}</li>		
+		<li class="location"><span>Bill Location:</span> ${bill.location} </li>
+		<li class="date"><span class="label"><openmrs:message code="openhmis.cashier.date"/>: </span> ${bill.dateCreated}</li>
 	</c:when>
 	<c:otherwise>
 		<li class="cashier"><span class="label"><openmrs:message code="openhmis.cashier.cashier.name"/>:</span> ${user.person.personName}</li>
+		<li class="location"><span>Bill Location:</span> ${location.name} </li>
 	</c:otherwise>
 </c:choose>	
 	<li class="cashPoint${timesheet != null ? " timesheet" : "" }">

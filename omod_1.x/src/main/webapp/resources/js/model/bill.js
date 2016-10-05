@@ -33,6 +33,7 @@ define(
 				billAdjusted: { type: 'Object', objRef: true },
 				cashPoint: { type: 'Object', objRef: true },
 				lineItems: { type: "List", itemType: "NestedModel", model: openhmis.LineItem },
+				keepitems: {type: "List", itemType: "NestedModel", model: openhmis.LineItem },
 				patient: { type: 'Object', objRef: true },
 				payments: { type: "List", itemType: "NestedModel", model: openhmis.Payment},
 				status: { type: 'Text' },
@@ -43,6 +44,7 @@ define(
 				PENDING:	"PENDING",
 				POSTED:		"POSTED",
 				PAID:		"PAID",
+				OVERPAID:   "OVERPAID",
 				ADJUSTED:	"ADJUSTED"
 			},
 			

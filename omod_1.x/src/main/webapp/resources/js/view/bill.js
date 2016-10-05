@@ -406,7 +406,12 @@ define(
                     this._postAdjustingBill(this.bill);
                 } else if (post === true) {
                     this.bill.set("status", this.bill.BillStatus.POSTED);
+                }else if(post !== true){
+                	//var adjustingItems = this.bill.get("lineItems");
+                    //this.bill.set("keepitems", this.bill.get("billAdjusted").get("lineItems"));
+                    //this.bill.get("keepitems").add(adjustingItems.models);
                 }
+
                 var print = options.print;
                 var success = options.success;
                 var error = options.error;
@@ -423,6 +428,7 @@ define(
                         error(model, resp);
                     }
                 }
+                console.log(options);
                 this.bill.save([], options);
                 return true;
             },
@@ -523,16 +529,48 @@ define(
             }
         });
 
+        /**
+        * BillLineItemOldView
+        * todo
+        */
+        openhmis.BillLineItemOldView = openhmis.GenericListItemView.extend({
+            _removeItem: function(event) {
+            	this._removeModel();
+            	Backbone.View.prototype.remove.call(this);
+            	this.trigger('remove', this.model);
+            	this.off();
+				this.model.billView.updateTotals();
+            },
+            _removeModel: function() {
+                if (this.model.collection) {
+                    var removed = this.model;
+                    this.model.collection.remove(this.model, { silent: true });
+					this.model.billView.bill.get("keepitems").push(removed);
+                }
+            }
+        });
+
+        /**
+        * BillAndPaymentsView
+        */
         openhmis.BillAndPaymentsView = Backbone.View.extend({
             className: "combineBoxes",
             initialize: function(options) {
                 var __ = i18n;
+                this.billView = options.bill;
+                var info = this.model.get("lineItems");
+                for(modelelement in info.models){
+                       	info.models[modelelement].billView = options.bill;
+                }
                 this.itemsView = new openhmis.GenericListView({
                     model: this.model.get("lineItems"),
+                    itemView: openhmis.BillLineItemOldView,
                     listTitle: __("Previous Bill (%s)", this.model),
+                    itemActions: ["remove"],
                     showPaging: false,
                     showRetiredOption: false
                 });
+
                 this.paymentsView = new openhmis.GenericListView({
                     model: this.model.get("payments"),
                     className: "paymentList",
@@ -553,6 +591,7 @@ define(
                 this.$('td.field-priceUuid').hide();
                 return this;
             }
+
         });
 
         return openhmis;

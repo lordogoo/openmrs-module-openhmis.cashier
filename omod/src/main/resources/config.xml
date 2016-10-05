@@ -24,6 +24,7 @@
 	</aware_of_modules>
 
 	<require_modules>
+		<require_module version="2.9">org.openmrs.module.webservices.rest</require_module>
 		<require_module version="2.3">org.openmrs.module.openhmis.backboneforms</require_module>
 		<require_module version="3.0">org.openmrs.module.openhmis.commons</require_module>
 		<require_module version="1.5">org.openmrs.module.openhmis.inventory</require_module>
@@ -113,11 +114,12 @@
 		<point>org.openmrs.patientDashboardTab</point>
 		<class>org.openmrs.module.openhmis.cashier.extension.html.CashierPatientBilHistoryExt</class>
 	</extension>
+    <!--
 	<extension>
 		<point>org.openmrs.headerFull.userBar</point>
 		<class>org.openmrs.module.openhmis.cashier.extension.html.CashierLinkExt</class>
 	</extension>
-
+    -->
 	<!-- Privileges -->
 	<!--  Bills  -->
 	<privilege>

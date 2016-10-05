@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.openhmis.cashier;
 
+import org.apache.commons.beanutils.converters.IntegerArrayConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
@@ -44,8 +45,11 @@ public class ModuleSettings {
 	public static Integer getReceiptReportId() {
 		AdministrationService administrationService = Context.getAdministrationService();
 		String property = administrationService.getGlobalProperty(RECEIPT_REPORT_ID_PROPERTY);
-
-		return Integer.parseInt(property);
+		if (property != null) {
+			return Integer.parseInt(property);
+		} else {
+			return null;
+		}
 	}
 
 	public static JasperReport getReceiptReport() {
@@ -180,6 +184,13 @@ public class ModuleSettings {
 			adminService.setGlobalProperty(TIMESHEET_REQUIRED_PROPERTY, Boolean.TRUE.toString());
 		} else {
 			adminService.setGlobalProperty(TIMESHEET_REQUIRED_PROPERTY, Boolean.FALSE.toString());
+		}
+
+		Integer patientDashboard2BillCount = cashierSettings.getPatientDashboard2BillCount();
+		if (patientDashboard2BillCount != null) {
+			adminService.setGlobalProperty(PATIENT_DASHBOARD_2_BILL_COUNT, patientDashboard2BillCount.toString());
+		} else {
+			adminService.setGlobalProperty(PATIENT_DASHBOARD_2_BILL_COUNT, "");
 		}
 
 	}
