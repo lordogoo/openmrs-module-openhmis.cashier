@@ -33,7 +33,7 @@ define(
 				billAdjusted: { type: 'Object', objRef: true },
 				cashPoint: { type: 'Object', objRef: true },
 				lineItems: { type: "List", itemType: "NestedModel", model: openhmis.LineItem },
-				keepitems: {type: "List", itemType: "NestedModel", model: openhmis.LineItem },
+				removeItems: {type: "List", itemType: "NestedModel", model: openhmis.LineItem },
 				patient: { type: 'Object', objRef: true },
 				payments: { type: "List", itemType: "NestedModel", model: openhmis.Payment},
 				status: { type: 'Text' },
@@ -177,6 +177,9 @@ define(
 			},
 			
 			parse: function(resp) {
+				function getURLParameter(name) {
+              		return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+            	}
 				if (resp === null) {
 					return resp;
 				}
@@ -194,6 +197,19 @@ define(
 				}
 				
 				if (resp.lineItems) {
+					//get rid of removed items
+					//added via kmri 775
+				    if(getURLParameter("billUuid") != null && resp.uuid != getURLParameter("billUuid")){
+				    	if(resp.adjustedBy.models.length != 0){
+				    		if(resp.status == "ADJUSTED" && resp.adjustedBy.models[0].attributes.status == "PENDING"){
+                    			for(var i = resp.lineItems.length-1; i >= 0; i--) {
+                        			if(resp.lineItems[i].removeItemOrder == 1){
+                        				resp.lineItems.splice(i,1);
+                        			}
+                    			}
+				    		}
+				    	}
+				    }
 					resp.lineItems = new openhmis.GenericCollection(resp.lineItems, {
 						model: openhmis.LineItem,
 						parse: true

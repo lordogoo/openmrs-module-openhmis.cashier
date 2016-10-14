@@ -545,7 +545,7 @@ define(
                 if (this.model.collection) {
                     var removed = this.model;
                     this.model.collection.remove(this.model, { silent: true });
-					this.model.billView.bill.get("keepitems").push(removed);
+					this.model.billView.bill.get("removeItems").push(removed);
                 }
             }
         });

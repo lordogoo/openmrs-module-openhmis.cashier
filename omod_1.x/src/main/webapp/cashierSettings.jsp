@@ -126,6 +126,26 @@
 			</tr>
 			<tr>
 				<td style="width: 70%;">
+					<spring:message code="openhmis.cashier.setting.revenueReportId.field.header"/>
+					<br/>
+					<span class="description"><spring:message code="openhmis.cashier.setting.revenueReportId.field.description"/></span>
+				</td>
+				<td>
+					<spring:bind path="defaultRevenueReportId">
+						<select id="defaultRevenueReportId" name="defaultRevenueReportId">
+							<option value=""></option>
+							<c:forEach items="${reports}" var="report">
+								<option value="${report.reportId}"
+								        <c:if test="${cashierSettings.defaultRevenueReportId == report.reportId}">selected</c:if>>
+										${report.name}
+								</option>
+							</c:forEach>
+						</select>
+					</spring:bind>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 70%;">
 					<spring:message code="openhmis.cashier.setting.nearestRounding.field.header"/>
 					<br/>
 					<span class="description"><spring:message code="openhmis.cashier.setting.nearestRounding.field.description"/></span>

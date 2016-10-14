@@ -11,6 +11,7 @@ public class CashierSettings {
 	private Boolean autoFillPaymentAmount;
 	private Integer defaultReceiptReportId;
 	private Integer defaultShitReportId;
+	private Integer defaultRevenueReportId;
 	private Boolean cashierMandatory;
 	private Integer cashierRoundingToNearest;
 	private String cashierRoundingMode;
@@ -55,6 +56,14 @@ public class CashierSettings {
 
 	public void setDefaultShitReportId(Integer defaultShitReportId) {
 		this.defaultShitReportId = defaultShitReportId;
+	}
+
+	public Integer getDefaultRevenueReportId() {
+		return defaultRevenueReportId;
+	}
+
+	public void setDefaultRevenueReportId(Integer defaultRevenueReportId) {
+		this.defaultRevenueReportId = defaultRevenueReportId;
 	}
 
 	public Boolean getCashierMandatory() {

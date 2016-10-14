@@ -27,6 +27,7 @@ import org.openmrs.module.openhmis.cashier.api.model.CashierSettings;
 public class ModuleSettings {
 	public static final String RECEIPT_REPORT_ID_PROPERTY = "openhmis.cashier.defaultReceiptReportId";
 	public static final String CASHIER_SHIFT_REPORT_ID_PROPERTY = "openhmis.cashier.defaultShiftReportId";
+	public static final String CASHIER_REVENUE_REPORT_ID_PROPERTY = "openhmis.cashier.defaultRevenueReportId";
 	public static final String TIMESHEET_REQUIRED_PROPERTY = "openhmis.cashier.timesheetRequired";
 	public static final String ROUNDING_MODE_PROPERTY = "openhmis.cashier.roundingMode";
 	public static final String ROUND_TO_NEAREST_PROPERTY = "openhmis.cashier.roundToNearest";
@@ -45,6 +46,26 @@ public class ModuleSettings {
 	public static Integer getReceiptReportId() {
 		AdministrationService administrationService = Context.getAdministrationService();
 		String property = administrationService.getGlobalProperty(RECEIPT_REPORT_ID_PROPERTY);
+		if (property != null) {
+			return Integer.parseInt(property);
+		} else {
+			return null;
+		}
+	}
+
+	public static Integer getShiftReportId() {
+		AdministrationService administrationService = Context.getAdministrationService();
+		String property = administrationService.getGlobalProperty(CASHIER_SHIFT_REPORT_ID_PROPERTY);
+		if (property != null) {
+			return Integer.parseInt(property);
+		} else {
+			return null;
+		}
+	}
+
+	public static Integer getRevenueReportId() {
+		AdministrationService administrationService = Context.getAdministrationService();
+		String property = administrationService.getGlobalProperty(CASHIER_REVENUE_REPORT_ID_PROPERTY);
 		if (property != null) {
 			return Integer.parseInt(property);
 		} else {
@@ -92,6 +113,11 @@ public class ModuleSettings {
 		property = administrationService.getGlobalProperty(CASHIER_SHIFT_REPORT_ID_PROPERTY);
 		if (!StringUtils.isEmpty(property)) {
 			cashierSettings.setDefaultShitReportId(Integer.parseInt(property));
+		}
+
+		property = administrationService.getGlobalProperty(CASHIER_REVENUE_REPORT_ID_PROPERTY);
+		if (!StringUtils.isEmpty(property)) {
+			cashierSettings.setDefaultRevenueReportId(Integer.parseInt(property));
 		}
 
 		property = administrationService.getGlobalProperty(ROUND_TO_NEAREST_PROPERTY);
@@ -156,6 +182,13 @@ public class ModuleSettings {
 			adminService.setGlobalProperty(CASHIER_SHIFT_REPORT_ID_PROPERTY, shiftReportId.toString());
 		} else {
 			adminService.setGlobalProperty(CASHIER_SHIFT_REPORT_ID_PROPERTY, "");
+		}
+
+		Integer revenueReportId = cashierSettings.getDefaultRevenueReportId();
+		if (revenueReportId != null) {
+			adminService.setGlobalProperty(CASHIER_REVENUE_REPORT_ID_PROPERTY, revenueReportId.toString());
+		} else {
+			adminService.setGlobalProperty(CASHIER_REVENUE_REPORT_ID_PROPERTY, "");
 		}
 
 		Integer roundToNearest = cashierSettings.getCashierRoundingToNearest();

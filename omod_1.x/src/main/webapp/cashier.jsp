@@ -30,6 +30,8 @@
     //var $ = jQuery;
     $j(function() {
         $j("#shiftDate").datepicker().change(findTimesheets);
+        $j("#revenueDateStart").datetimepicker();
+        $j("#revenueDateEnd").datetimepicker();
     });
 
     function dateTimeFormat(date) {
@@ -95,15 +97,40 @@
     function printReport() {
         var reportId = $j("#reportId").val();
         var timesheetId = jQuery("input[name=timesheetId]:checked").val();
+        var revenueDateStart = jQuery("#revenueDateStart").val();
+        var revenueDateEnd = jQuery("#revenueDateEnd").val();
+		var revenueDateObjectStart = Date.parse(revenueDateStart);
+		//console.log(revenueDateObjectStart);
+		var revenueDateObjectEnd = Date.parse(revenueDateEnd);
+		//console.log(revenueDateObjectEnd);
 
-        if (!timesheetId) {
-            alert("<spring:message code="openhmis.cashier.page.reports.error.timesheetRequired" />");
-            return false;
+        if (reportId == ${shiftReport != null ? shiftReport.reportId : -1 } ) {
+        	if(!timesheetId){
+            	alert("<spring:message code="openhmis.cashier.page.reports.error.timesheetRequired" />");
+            	return false;
+            }else{
+	        	var url = openhmis.url.openmrs + "<%= CashierWebConstants.JASPER_REPORT_PAGE %>.form?"
+            	url += "reportId=" + reportId  + "&timesheetId=" + timesheetId;
+            	window.open(url, "pdfDownload");
+            	return false;
+            }
         }
 
-        var url = openhmis.url.openmrs + "<%= CashierWebConstants.JASPER_REPORT_PAGE %>.form?"
-        url += "reportId=" + reportId  + "&timesheetId=" + timesheetId;
-        window.open(url, "pdfDownload");
+        if (reportId == ${revenueReport != null ? revenueReport.reportId : -1}){
+            if(revenueDateEnd=="" || revenueDateStart==""){
+            	alert("<spring:message code="openhmis.cashier.page.reports.error.sandeDateRequired" />");
+            	return false;
+            }else if(revenueDateObjectStart >= revenueDateObjectEnd){
+                alert("<spring:message code="openhmis.cashier.page.reports.error.sandeDateLessThan" />");
+                return false;
+            }else{
+            	var url = openhmis.url.openmrs + "<%= CashierWebConstants.JASPER_REPORT_PAGE %>.form?"
+                url += "reportId=" + reportId  +"&revenueDateStart="+ revenueDateStart +"&revenueDateEnd=" + revenueDateEnd;
+                window.open(url, "pdfDownload");
+                return false;
+            }
+        }
+
         return false;
     }
 </script>
@@ -172,30 +199,67 @@
     </div>
 </form:form>
 
-<c:if test="${shiftReport != null}">
+<c:if test="${shiftReport != null || revenueReport != null}">
 <form:form onsubmit="return false;">
     <h2><spring:message code="openhmis.cashier.page.reports" /></h2>
     <b class="boxHeader"><spring:message code="openhmis.cashier.page.reports.box.title" /></b>
-    <div class="box">
-        <ul>
-            <li class="bbf-field field-description">
-                <h3>${shiftReport.name}</h3>
-                <label for="shiftDate"><spring:message code="openhmis.cashier.page.reports.box.select.shift.date" /></label>
-                <div class="bbf-editor">
-                    <div style="float: left;">
-                        <input id="shiftDate" type="text" /><br />
+    <c:if test="${shiftReport != null}">
+    	<div class="box">
+        	<ul>
+            	<li class="bbf-field field-description">
+                	<h3>${shiftReport.name}</h3>
+                	<label for="shiftDate"><spring:message code="openhmis.cashier.page.reports.box.select.shift.date" /></label>
+                	<div class="bbf-editor">
+                    	<div style="float: left;">
+                        	<input id="shiftDate" type="text" /><br />
+                    	</div>
+                    	<div style="float: left; padding-left: 8px;">
+                        	<label for="shiftSearchResults"><spring:message code="openhmis.cashier.page.reports.box.timesheets.shift.date" /></label>
+                        	<div id="shiftSearchResults"></div>
+                    	</div>
+                    	<div style="clear: both;"></div>
+                	</div>
+            	</li>
+        	</ul>
+        	<input type="hidden" id="reportId" name="reportId" value="${shiftReport.reportId}">
+        	<input type="submit" value="<spring:message code="openhmis.cashier.page.reports.box.generate.report" />" onclick="printReport()">
+    	</div>
+    </c:if>
+</form:form>
+<form:form onsubmit="return false;">
+    <c:if test="${revenueReport != null}">
+        <div class="box">
+            <ul>
+                <li class="bbf-field field-description">
+                    <h3>${revenueReport.name}</h3>
+                    <label for="revenueDate"><spring:message code="openhmis.cashier.page.reports.box.select.revenue.date.start" /></label>
+                    <div class="bbf-editor">
+                        <div style="float: left;">
+                            <input id="revenueDateStart" type="text" /><br />
+                        </div>
+                        <div style="float: left; padding-left: 8px;">
+                            <label for="revenueSearchResults"><spring:message code="openhmis.cashier.page.reports.box.timesheets.revenue.date.start" /></label>
+                            <div id="revenueSearchResults"></div>
+                        </div>
+                        <div style="clear: both;"></div>
                     </div>
-                    <div style="float: left; padding-left: 8px;">
-                        <label for="shiftSearchResults"><spring:message code="openhmis.cashier.page.reports.box.timesheets.shift.date" /></label>
-                        <div id="shiftSearchResults"></div>
+                    <br/>
+                    <div class="bbf-editor">
+                        <div style="float: left;">
+                            <input id="revenueDateEnd" type="text" /><br />
+                        </div>
+                        <div style="float: left; padding-left: 8px;">
+                            <label for="revenueSearchResults"><spring:message code="openhmis.cashier.page.reports.box.timesheets.revenue.date.end" /></label>
+                            <div id="revenueSearchResults"></div>
+                        </div>
+                        <div style="clear: both;"></div>
                     </div>
-                    <div style="clear: both;"></div>
-                </div>
-            </li>
-        </ul>
-        <input type="hidden" id="reportId" name="reportId" value="${shiftReport.reportId}">
-        <input type="submit" value="<spring:message code="openhmis.cashier.page.reports.box.generate.report" />" onclick="printReport()">
-    </div>
+                </li>
+            </ul>
+            <input type="hidden" id="reportId" name="reportId" value="${revenueReport.reportId}">
+            <input type="submit" value="<spring:message code="openhmis.cashier.page.reports.box.generate.report" />" onclick="printReport()">
+        </div>
+    </c:if>
 </form:form>
 </c:if>
 

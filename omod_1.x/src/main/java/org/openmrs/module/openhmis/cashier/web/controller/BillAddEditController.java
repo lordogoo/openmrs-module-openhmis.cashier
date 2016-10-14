@@ -182,8 +182,8 @@ public class BillAddEditController {
 		try {
 			bill = service.getByUuid(billUuid);
 		} catch (APIException e) {
-			LOG.error("Error when trying to get bill with ID <" + billUuid + ">", e);
-			throw new APIException("Error when trying to get bill with ID <" + billUuid + ">");
+			LOG.error("Error when trying to get bill with ID <" + billUuid + "> " + e.getMessage(), e);
+			throw new APIException("Error when trying to get bill with ID <" + billUuid + ">" + e.getMessage());
 		}
 
 		return bill;

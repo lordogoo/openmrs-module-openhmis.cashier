@@ -16,10 +16,10 @@ package org.openmrs.module.openhmis.cashier.api.model;
 import java.math.BigDecimal;
 import java.security.AccessControlException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
+import java.util.HashSet;
 
 import org.openmrs.BaseOpenmrsData;
 import org.openmrs.Location;
@@ -44,7 +44,7 @@ public class Bill extends BaseOpenmrsData {
 	private Bill billAdjusted;
 	private BillStatus status;
 	private List<BillLineItem> lineItems;
-	private List<BillLineItem> keepitems = new ArrayList<BillLineItem>();
+	private List<BillLineItem> removeItems = new ArrayList<BillLineItem>();
 	private Set<Payment> payments;
 	private Set<Bill> adjustedBy;
 	private Boolean receiptPrinted = false;
@@ -367,11 +367,24 @@ public class Bill extends BaseOpenmrsData {
 		return location;
 	}
 
-	public List<BillLineItem> getKeepitems() {
-		return keepitems;
+	public void addRemoveItems(BillLineItem item) {
+		if (item == null) {
+			throw new NullPointerException("The list item to add must be defined.");
+		}
+
+		if (this.removeItems == null) {
+			this.removeItems = new ArrayList<BillLineItem>();
+		}
+
+		this.removeItems.add(item);
+		item.setBill(this);
 	}
 
-	public void setKeepitems(List<BillLineItem> lineItems) {
-		keepitems = lineItems;
+	public List<BillLineItem> getRemoveItems() {
+		return removeItems;
+	}
+
+	public void setRemoveItems(List<BillLineItem> lineItems) {
+		removeItems = lineItems;
 	}
 }

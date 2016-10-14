@@ -33,6 +33,7 @@ public class BillLineItem extends BaseOpenmrsData {
 	private ItemPrice itemPrice;
 	private Integer quantity;
 	private Integer lineItemOrder;
+	private Integer removeItemOrder;
 
 	@Override
 	public Integer getId() {
@@ -106,5 +107,13 @@ public class BillLineItem extends BaseOpenmrsData {
 
 	public void setLineItemOrder(Integer lineItemOrder) {
 		this.lineItemOrder = lineItemOrder;
+	}
+
+	public Integer getRemoveItemOrder() {
+		return removeItemOrder;
+	}
+
+	public void setRemoveItemOrder(Integer removeItemOrder) {
+		this.removeItemOrder = removeItemOrder;
 	}
 }

@@ -14,6 +14,7 @@
 package org.openmrs.module.webservices.rest.resource;
 
 import com.google.common.collect.Iterators;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Location;
 import org.openmrs.Provider;
 import org.openmrs.User;
@@ -22,6 +23,7 @@ import org.openmrs.api.ProviderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.openhmis.cashier.ModuleSettings;
 import org.openmrs.module.openhmis.cashier.api.IBillService;
+import org.openmrs.module.openhmis.cashier.api.IBillLineItemService;
 import org.openmrs.module.openhmis.cashier.api.ITimesheetService;
 import org.openmrs.module.openhmis.cashier.api.model.Bill;
 import org.openmrs.module.openhmis.cashier.api.model.BillLineItem;
@@ -36,6 +38,7 @@ import org.openmrs.module.openhmis.inventory.api.IStockroomDataService;
 import org.openmrs.module.openhmis.inventory.api.model.Stockroom;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.module.webservices.rest.web.annotation.PropertyGetter;
 import org.openmrs.module.webservices.rest.web.annotation.PropertySetter;
 import org.openmrs.module.webservices.rest.web.annotation.Resource;
 import org.openmrs.module.webservices.rest.web.representation.DefaultRepresentation;
@@ -63,12 +66,12 @@ public class BillResource extends BaseRestDataResource<Bill> {
 	public DelegatingResourceDescription getRepresentationDescription(Representation rep) {
 		DelegatingResourceDescription description = super.getRepresentationDescription(rep);
 		if (!(rep instanceof RefRepresentation)) {
-			description.addProperty("adjustedBy", Representation.REF);
+			description.addProperty("adjustedBy");
 			description.addProperty("billAdjusted", Representation.REF);
 			description.addProperty("cashPoint", Representation.REF);
 			description.addProperty("cashier", Representation.REF);
 			description.addProperty("lineItems");
-			description.addProperty("keepitems");
+			description.addProperty("removeItems");
 			description.addProperty("patient", Representation.REF);
 			description.addProperty("payments", Representation.FULL);
 			description.addProperty("receiptNumber");
@@ -86,6 +89,7 @@ public class BillResource extends BaseRestDataResource<Bill> {
 
 	@PropertySetter("lineItems")
 	public void setBillLineItems(Bill instance, List<BillLineItem> lineItems) {
+		System.out.println("add line items");
 		if (instance.getLineItems() == null) {
 			instance.setLineItems(new ArrayList<BillLineItem>(lineItems.size()));
 		}
@@ -95,10 +99,18 @@ public class BillResource extends BaseRestDataResource<Bill> {
 		}
 	}
 
-	@PropertySetter("keepitems")
-	public void setKeepItems(Bill instance, List<BillLineItem> keepitems) {
-		for (int i = 0; i < keepitems.size(); i++) {
-			instance.getBillAdjusted().getLineItems().remove(keepitems.get(i));
+	@PropertySetter("removeItems")
+	public void setRemoveItems(Bill instance, List<BillLineItem> removeItems) {
+		System.out.println("add remove items");
+		for (int i = 0; i < removeItems.size(); i++) {
+			System.out.println("remove item " + removeItems.get(i).getUuid());
+			removeItems.get(i).setRemoveItemOrder(new Integer(1));
+
+			int index = instance.getBillAdjusted().getLineItems().indexOf(removeItems.get(i));
+			if (index != -1) {
+				instance.getBillAdjusted().getLineItems().get(index).setRemoveItemOrder(new Integer(1));
+			}
+			//Context.getService(IBillLineItemService.class).saveOrUpdateLineItem(removeItems.get(i));
 		}
 	}
 

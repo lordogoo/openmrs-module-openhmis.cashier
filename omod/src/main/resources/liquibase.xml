@@ -849,4 +849,36 @@
             <column name="location_id" type="int"></column>
         </addColumn>
     </changeSet>
+    <changeSet id="kmri.cashier-0.2" author="Mark Nicoll">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="cashier_bill_line_item" columnName="remove_item_order" />
+            </not>
+        </preConditions>
+        <addColumn tableName="cashier_bill_line_item">
+            <column name="remove_item_order" type="int"></column>
+        </addColumn>
+    </changeSet>
+    <!-- <changeSet id="kmri.cashier-0.3" author="Mark Nicoll">
+        <preConditions onFail="MARK_RAN">
+            <columnExists tableName="cashier_bill_line_item" columnName="remove_item_order" />
+        </preConditions>
+        <list name="lineItems" lazy="false" inverse="true" cascade="all-delete-orphan">
+            <key column="bill_id" />
+            <list-index column="line_item_order" />
+            <one-to-many class="BillLineItem" />
+        </list>
+        <list name="removeItems" lazy="false" inverse="true" cascade="all-delete-orphan">
+            <key column="bill_id" />
+            <list-index column="remove_item_order" />
+            <one-to-many class="BillLineItem" />
+        </list>
+        <addForeignKeyConstraint constraintName="cashier_bill_line_item_item_id_fk"
+                                 baseTableName="cashier_bill_line_item" baseColumnNames="line_item_order"
+                                 referencedTableName="cashier_bill" referencedColumnNames="item_id" />
+        <addForeignKeyConstraint constraintName="cashier_bill_line_item_item_id_fk"
+                                 baseTableName="cashier_bill_line_item" baseColumnNames="remove_item_order"
+                                 referencedTableName="cashier_bill" referencedColumnNames="item_id" />
+
+    </changeSet> -->
 </databaseChangeLog>
