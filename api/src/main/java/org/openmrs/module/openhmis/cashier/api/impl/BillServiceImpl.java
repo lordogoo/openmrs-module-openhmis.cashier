@@ -232,4 +232,3 @@ public class BillServiceImpl extends BaseEntityDataServiceImpl<Bill> implements 
 		return PrivilegeConstants.VIEW_BILLS;
 	}
 }
-

@@ -341,4 +341,3 @@ public class Bill extends BaseOpenmrsData {
 		return dateString;
 	}
 }
-
