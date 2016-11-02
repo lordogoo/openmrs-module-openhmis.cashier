@@ -24,14 +24,13 @@
     function ManagePaymentModesController($injector, $scope, $filter, EntityRestFactory, CssStylesFactory, PaginationService, PaymentModeModel, CookiesService) {
 
         var self = this;
-
-        var module_name = 'cashier';
         var entity_name = emr.message("openhmis.cashier.paymentMode.name");
-        var rest_entity_name = emr.message("openhmis.cashier.paymentMode.rest_name");
+        var REST_ENTITY_NAME = "paymentMode";
 
         // @Override
         self.getModelAndEntityName = self.getModelAndEntityName || function() {
-                self.bindBaseParameters(module_name, rest_entity_name, entity_name);
+                self.checkPrivileges(TASK_MANAGE_METADATA);
+                self.bindBaseParameters(CASHIER_MODULE_NAME, REST_ENTITY_NAME, entity_name);
             }
 
         /* ENTRY POINT: Instantiate the base controller which loads the page */

@@ -37,7 +37,7 @@
     </div>
     <br/><br/><br/>
 
-    <div ng-controller="ManageCashpointsController">
+    <div>
         <div id="entities">
             <div class="btn-group">
                 ${ui.message('openhmis.cashier.location.name')}:
@@ -60,7 +60,7 @@
             </div>
 
             <br/><br/>
-            <table style="margin-bottom:5px;" class="manage-cashpoints-table">
+            <table style="margin-bottom:5px;" class="manage-cashpoints-table" id="manage-cashpoints-table">
                 <thead>
                 <tr>
                     <th>${ui.message('general.name')}</th>

@@ -135,7 +135,6 @@ public class CashierController {
 
 		// load shift report (this must be refactored for the next version)
 		loadShiftReport(modelMap);
-		loadRevenueReport(modelMap);
 
 		addRenderAttributes(modelMap, timesheet, provider, returnTo);
 	}
@@ -147,7 +146,6 @@ public class CashierController {
 		new TimesheetEntryValidator().validate(timesheet, errors);
 		if (errors.hasErrors()) {
 			loadShiftReport(modelMap);
-			loadRevenueReport(modelMap);
 			addRenderAttributes(modelMap, timesheet, timesheet.getCashier(), returnUrl);
 
 			return null;
@@ -181,24 +179,6 @@ public class CashierController {
 
 				if (shiftReport != null) {
 					modelMap.addAttribute("shiftReport", shiftReport);
-				}
-			}
-		}
-	}
-
-	private void loadRevenueReport(ModelMap modelMap) {
-		if (jasperService == null) {
-			jasperService = Context.getService(JasperReportService.class);
-		}
-
-		JasperReport revenueReport = null;
-		String revenueReportId = adminService.getGlobalProperty(ModuleSettings.CASHIER_REVENUE_REPORT_ID_PROPERTY);
-		if (StringUtils.isNotEmpty(revenueReportId)) {
-			if (StringUtils.isNumeric(revenueReportId)) {
-				revenueReport = jasperService.getJasperReport(Integer.parseInt(revenueReportId));
-
-				if (revenueReport != null) {
-					modelMap.addAttribute("revenueReport", revenueReport);
 				}
 			}
 		}

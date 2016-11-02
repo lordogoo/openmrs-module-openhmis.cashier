@@ -18,7 +18,7 @@
 <%--@elvariable id="generators" type="java.util.List"--%>
 <%@ include file="/WEB-INF/template/include.jsp"%>
 
-<openmrs:require privilege="<%=PrivilegeConstants.MANAGE_BILLS %>" otherwise="/login.htm" redirect="<%= CashierWebConstants.RECEIPT_NUMBER_GENERATOR_PAGE_2X%>" />
+<openmrs:require privilege="<%=PrivilegeConstants.TASK_MANAGE_CASHIER_METADATA %>" otherwise="/login.htm" redirect="<%= CashierWebConstants.RECEIPT_NUMBER_GENERATOR_PAGE_2X%>" />
 
 <openmrs:htmlInclude file='<%= request.getContextPath() + CashierWebConstants.MODULE_RESOURCE_ROOT + "css/style.css" %>'/>
 <openmrs:htmlInclude file='<%= request.getContextPath() + CashierWebConstants.MODULE_COMMONS_RESOURCE_ROOT + "css/css_2.x/style2x.css" %>'/>
@@ -50,24 +50,33 @@
             <c:forEach var="generator" items="${generators}">
                 <tr>
                     <td>
-                       <input type="radio" name="selectedGenerator" value="${generator.name}" id="${generator}"
-                            <c:if test="${currentGenerator.name == generator.name}">checked="true"</c:if>/>
-                       <label class="removeBold" for="${generator}">${generator.name}</label>
+	                    <table style="width: 100%">
+		                    <tr>
+			                    <td>
+				                    <input type="radio" name="selectedGenerator" value="${generator.name}" id="${generator}"
+			                                <c:if test="${currentGenerator.name == generator.name}">checked="true"</c:if>/>
+				                    <label class="removeBold" for="${generator}">${generator.name}</label>
+			                    </td>
+			                    <td id="generatorLink" style="text-align: right" align="right">
+				                    <c:if test="${currentGenerator.name == generator.name && not empty generator.configurationPage}">
+					                    <a class="btn btn-grey text-align-right" href="${pageContext.request.contextPath}/${generator.configurationPage}2x.page">
+						                    <spring:message code="openhmis.cashier.receiptGenerator.configure"/></a>
+				                    </c:if>
+			                    </td>
+		                    </tr>
+	                    </table>
                     </td>
                 </tr>
                 <tr>
+                   <td>
+	            <table>
+                   <tr>
                    <td style="font-style: italic;" class="indent">${generator.description}</td>
+                    <td>
+                </td>
                 </tr>
-                <c:if test="${currentGenerator.name == generator.name && not empty generator.configurationPage}">
-                    <tr>
-                        <td class="indent">
-                          <a href="${pageContext.request.contextPath}/${generator.configurationPage}2x.page">
-                             <spring:message code="openhmis.cashier.receiptGenerator.configure" />
-                          </a>
-                        </td>
-                    </tr>
-                </c:if>
-
+		            </table></td>
+                </tr>
             </c:forEach>
         </table>
         <input class="submitButton confirm right" value="<openmrs:message code="openhmis.cashier.receiptGenerator.save"/>" type="submit" />

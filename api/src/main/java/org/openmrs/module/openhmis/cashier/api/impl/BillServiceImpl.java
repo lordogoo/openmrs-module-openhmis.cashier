@@ -13,17 +13,12 @@
  */
 package org.openmrs.module.openhmis.cashier.api.impl;
 
-import java.math.BigDecimal;
-import java.security.AccessControlException;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.annotation.Authorized;
 import org.openmrs.api.context.Context;
@@ -31,15 +26,17 @@ import org.openmrs.module.openhmis.cashier.api.IBillService;
 import org.openmrs.module.openhmis.cashier.api.IReceiptNumberGenerator;
 import org.openmrs.module.openhmis.cashier.api.ReceiptNumberGeneratorFactory;
 import org.openmrs.module.openhmis.cashier.api.model.Bill;
-import org.openmrs.module.openhmis.cashier.api.model.BillLineItem;
 import org.openmrs.module.openhmis.cashier.api.search.BillSearch;
 import org.openmrs.module.openhmis.cashier.api.util.PrivilegeConstants;
 import org.openmrs.module.openhmis.commons.api.PagingInfo;
 import org.openmrs.module.openhmis.commons.api.entity.impl.BaseEntityDataServiceImpl;
 import org.openmrs.module.openhmis.commons.api.entity.security.IEntityAuthorizationPrivileges;
 import org.openmrs.module.openhmis.commons.api.f.Action1;
-import org.openmrs.module.openhmis.inventory.api.util.HibernateCriteriaConstants;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.security.AccessControlException;
+import java.util.List;
 
 /**
  * Data service implementation class for {@link Bill}s.
@@ -130,24 +127,11 @@ public class BillServiceImpl extends BaseEntityDataServiceImpl<Bill> implements 
 
 		Criteria criteria = getRepository().createCriteria(getEntityClass());
 		criteria.add(Restrictions.eq("patient.id", patientId));
+		criteria.addOrder(Order.desc("id"));
 
-		List<Bill> results = getRepository().select(getEntityClass(), criteria);
+		List<Bill> results = getRepository().select(getEntityClass(), createPagingCriteria(paging, criteria));
 		removeNullLineItems(results);
-		return results;
-	}
 
-	@Override
-	public List<Bill> getBillsByPatientId(int patientId, Location location, PagingInfo paging) {
-		if (patientId < 0) {
-			throw new IllegalArgumentException("The patient id must be a valid identifier.");
-		}
-
-		Criteria criteria = getRepository().createCriteria(getEntityClass());
-		criteria.add(Restrictions.eq("patient.id", patientId));
-		criteria.add(Restrictions.eq("location", location));
-
-		List<Bill> results = getRepository().select(getEntityClass(), criteria);
-		removeNullLineItems(results);
 		return results;
 	}
 
@@ -168,19 +152,6 @@ public class BillServiceImpl extends BaseEntityDataServiceImpl<Bill> implements 
 			@Override
 			public void apply(Criteria criteria) {
 				billSearch.updateCriteria(criteria);
-			}
-		});
-	}
-
-	@Override
-	public List<Bill> getBillsByLocation(final Location location, final Boolean includeRetired, PagingInfo pagingInfo) {
-		return executeCriteria(Bill.class, pagingInfo, new Action1<Criteria>() {
-			@Override
-			public void apply(Criteria criteria) {
-				criteria.add(Restrictions.eq(HibernateCriteriaConstants.LOCATION, location));
-				if (!includeRetired) {
-					criteria.add(Restrictions.eq(HibernateCriteriaConstants.RETIRED, false));
-				}
 			}
 		});
 	}
@@ -261,3 +232,4 @@ public class BillServiceImpl extends BaseEntityDataServiceImpl<Bill> implements 
 		return PrivilegeConstants.VIEW_BILLS;
 	}
 }
+

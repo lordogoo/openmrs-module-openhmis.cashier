@@ -16,13 +16,12 @@ package org.openmrs.module.openhmis.cashier.api.model;
 import java.math.BigDecimal;
 import java.security.AccessControlException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.openmrs.BaseOpenmrsData;
-import org.openmrs.Location;
 import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
@@ -44,12 +43,10 @@ public class Bill extends BaseOpenmrsData {
 	private Bill billAdjusted;
 	private BillStatus status;
 	private List<BillLineItem> lineItems;
-	private List<BillLineItem> removeItems = new ArrayList<BillLineItem>();
 	private Set<Payment> payments;
 	private Set<Bill> adjustedBy;
 	private Boolean receiptPrinted = false;
 	private String adjustmentReason;
-	private Location location;
 
 	public String getAdjustmentReason() {
 		return adjustmentReason;
@@ -93,17 +90,6 @@ public class Bill extends BaseOpenmrsData {
 		}
 
 		return total;
-	}
-
-	/*
-	 * kmri function. gets the total ammount paid valid or not.
-	 */
-	public BigDecimal getTotalPaid() {
-		BigDecimal totalpaid = new BigDecimal(0);
-		for (int j = 0; j < this.getPayments().size(); j++) {
-			totalpaid = totalpaid.add(((Payment)this.getPayments().toArray()[j]).getAmountTendered());
-		}
-		return totalpaid;
 	}
 
 	public BigDecimal getAmountPaid() {
@@ -288,11 +274,7 @@ public class Bill extends BaseOpenmrsData {
 	public boolean checkPaidAndUpdateStatus() {
 		if (this.getPayments().size() > 0) {
 			if (this.status == BillStatus.PENDING || this.status == BillStatus.POSTED) {
-				System.out.println("****set status " + getTotalPaid().intValue() + " " + getTotal().intValue());
-				if (getTotalPaid().compareTo(getTotal()) > 0) {
-					this.setStatus(BillStatus.OVERPAID);
-					return true;
-				} else if (getTotalPaid().compareTo(getTotal()) == 0) {
+				if (getTotalPayments().compareTo(getTotal()) >= 0) {
 					this.setStatus(BillStatus.PAID);
 					return true;
 				} else if (this.status == BillStatus.PENDING) {
@@ -358,33 +340,5 @@ public class Bill extends BaseOpenmrsData {
 
 		return dateString;
 	}
-
-	public void setLocation(Location l) {
-		location = l;
-	}
-
-	public Location getLocation() {
-		return location;
-	}
-
-	public void addRemoveItems(BillLineItem item) {
-		if (item == null) {
-			throw new NullPointerException("The list item to add must be defined.");
-		}
-
-		if (this.removeItems == null) {
-			this.removeItems = new ArrayList<BillLineItem>();
-		}
-
-		this.removeItems.add(item);
-		item.setBill(this);
-	}
-
-	public List<BillLineItem> getRemoveItems() {
-		return removeItems;
-	}
-
-	public void setRemoveItems(List<BillLineItem> lineItems) {
-		removeItems = lineItems;
-	}
 }
+

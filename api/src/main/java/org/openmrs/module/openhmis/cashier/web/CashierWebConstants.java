@@ -42,6 +42,9 @@ public class CashierWebConstants extends WebConstants {
 	public static final String CASHIER_SETTINGS_2X_ROOT = MODULE_ROOT + "cashierSettings2x";
 	public static final String CASHIER_SETTINGS_2X_PAGE = CASHIER_SETTINGS_2X_ROOT + ".page";
 
+	public static final String MODULE_SETTINGS_ROOT = MODULE_ROOT + "moduleSettings";
+	public static final String MODULE_SETTINGS_PAGE = MODULE_SETTINGS_ROOT + ".page";
+
 	public static final String BILL_PAGE = MODULE_ROOT + "bill";
 	public static final String RECEIPT = MODULE_ROOT + "receipt";
 	public static final String ADMIN_MODULE_ROOT = WebConstants.MODULE_BASE + CashierModuleConstants.MODULE_NAME
@@ -55,6 +58,8 @@ public class CashierWebConstants extends WebConstants {
 	public static final String OPENHMIS_CASHIER_MODULE_ID = "openhmis.cashier";
 	public static final String LANDING_PAGE_EXTENSION_POINT_ID = "org.openmrs.module.openhmis.cashier.landing";
 	public static final String MANAGE_MODULE_PAGE_EXTENSION_POINT_ID = "org.openmrs.module.openhmis.cashier.manage.module";
+	public static final String TASKS_DASHBOARD_PAGE_EXTENSION_POINT_ID =
+	        "org.openmrs.module.openhmis.cashier.tasks.dashboard";
 	public static final String MESSAGE_PROPERTIES_JS_URI = MODULE_ROOT + "cashierMessageProperties.js";
 	public static final String MESSAGE_PAGE = MODULE_ROOT + "cashierMessageProperties";
 }

@@ -22,7 +22,7 @@
     ui.includeJavascript("openhmis.cashier", "paymentMode/controllers/entity.controller.js")
     ui.includeJavascript("openhmis.cashier", "paymentMode/controllers/manage-entity.controller.js")
     ui.includeJavascript("openhmis.cashier", "paymentMode/services/entity.functions.js")
-
+    ui.includeJavascript("openhmis.cashier", "constants.js")
 %>
 
 <script data-main="paymentMode/configs/entity.main" src="/${ ui.contextPath() }/moduleResources/uicommons/scripts/require/require.js"></script>

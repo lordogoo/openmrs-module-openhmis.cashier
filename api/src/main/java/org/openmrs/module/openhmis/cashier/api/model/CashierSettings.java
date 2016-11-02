@@ -10,13 +10,18 @@ public class CashierSettings {
 	private Boolean allowBillAdjustment;
 	private Boolean autoFillPaymentAmount;
 	private Integer defaultReceiptReportId;
-	private Integer defaultShitReportId;
-	private Integer defaultRevenueReportId;
+	private Integer defaultShiftReportId;
 	private Boolean cashierMandatory;
 	private Integer cashierRoundingToNearest;
 	private String cashierRoundingMode;
 	private Boolean cashierTimesheetRequired;
 	private Integer patientDashboard2BillCount;
+
+	private Integer departmentCollectionsReportId;
+	private Integer departmentRevenueReportId;
+	private Integer shiftSummaryReportId;
+	private Integer dailyShiftSummaryReportId;
+	private Integer paymentsByPaymentModeReportId;
 
 	public Boolean getAdjustmentReasonField() {
 		return adjustmentReasonField;
@@ -50,20 +55,12 @@ public class CashierSettings {
 		this.defaultReceiptReportId = defaultReceiptReportId;
 	}
 
-	public Integer getDefaultShitReportId() {
-		return defaultShitReportId;
+	public Integer getDefaultShiftReportId() {
+		return defaultShiftReportId;
 	}
 
-	public void setDefaultShitReportId(Integer defaultShitReportId) {
-		this.defaultShitReportId = defaultShitReportId;
-	}
-
-	public Integer getDefaultRevenueReportId() {
-		return defaultRevenueReportId;
-	}
-
-	public void setDefaultRevenueReportId(Integer defaultRevenueReportId) {
-		this.defaultRevenueReportId = defaultRevenueReportId;
+	public void setDefaultShiftReportId(Integer defaultShiftReportId) {
+		this.defaultShiftReportId = defaultShiftReportId;
 	}
 
 	public Boolean getCashierMandatory() {
@@ -104,5 +101,45 @@ public class CashierSettings {
 
 	public void setPatientDashboard2BillCount(Integer numberOfBillsToShowOnEachPage) {
 		this.patientDashboard2BillCount = numberOfBillsToShowOnEachPage;
+	}
+
+	public Integer getDepartmentCollectionsReportId() {
+		return departmentCollectionsReportId;
+	}
+
+	public void setDepartmentCollectionsReportId(Integer departmentCollectionsReportId) {
+		this.departmentCollectionsReportId = departmentCollectionsReportId;
+	}
+
+	public Integer getDepartmentRevenueReportId() {
+		return departmentRevenueReportId;
+	}
+
+	public void setDepartmentRevenueReportId(Integer departmentRevenueReportId) {
+		this.departmentRevenueReportId = departmentRevenueReportId;
+	}
+
+	public Integer getShiftSummaryReportId() {
+		return shiftSummaryReportId;
+	}
+
+	public void setShiftSummaryReportId(Integer shiftSummaryReportId) {
+		this.shiftSummaryReportId = shiftSummaryReportId;
+	}
+
+	public Integer getDailyShiftSummaryReportId() {
+		return dailyShiftSummaryReportId;
+	}
+
+	public void setDailyShiftSummaryReportId(Integer dailyShiftSummaryReportId) {
+		this.dailyShiftSummaryReportId = dailyShiftSummaryReportId;
+	}
+
+	public Integer getPaymentsByPaymentModeReportId() {
+		return paymentsByPaymentModeReportId;
+	}
+
+	public void setPaymentsByPaymentModeReportId(Integer paymentsByPaymentModeReportId) {
+		this.paymentsByPaymentModeReportId = paymentsByPaymentModeReportId;
 	}
 }

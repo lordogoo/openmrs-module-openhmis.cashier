@@ -14,16 +14,14 @@
 package org.openmrs.module.openhmis.cashier.web.controller;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.Location;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.jasperreport.JasperReport;
+import org.openmrs.module.jasperreport.JasperReportService;
+import org.openmrs.module.jasperreport.ReportParameter;
 import org.openmrs.module.jasperreport.ReportsControllerBase;
 import org.openmrs.module.openhmis.cashier.ModuleSettings;
 import org.openmrs.module.openhmis.cashier.api.model.CashierSettings;
 import org.openmrs.module.openhmis.cashier.web.CashierWebConstants;
-import org.openmrs.module.openhmis.inventory.api.model.Settings;
-import org.openmrs.util.OpenmrsConstants;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.request.WebRequest;
@@ -33,6 +31,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Controller to manage the Jasper Reports page.
@@ -40,52 +39,102 @@ import java.util.HashMap;
 @Controller
 @RequestMapping(value = CashierWebConstants.JASPER_REPORT_PAGE)
 public class JasperReportController extends ReportsControllerBase {
-
-	private static final Log LOG = LogFactory.getLog(CashierController.class);
-
 	@Override
 	public String parse(int reportId, WebRequest request, HttpServletResponse response) throws IOException {
-		CashierSettings settings = org.openmrs.module.openhmis.cashier.ModuleSettings.loadSettings();
-		HashMap<String, Object> params = new HashMap<String, Object>();
-
-		if (settings.getDefaultShitReportId() != null
-		        && reportId == settings.getDefaultShitReportId().intValue()) {
-
-			int timesheetId;
-			String temp = request.getParameter("timesheetId");
-			if (!StringUtils.isEmpty(temp) && StringUtils.isNumeric(temp)) {
-				timesheetId = Integer.parseInt(temp);
-			} else {
-				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The timesheet id ('" + temp
-				        + "') must be "
-				        + "defined and be numeric.");
-				return null;
-			}
-			params.put("timesheetId", timesheetId);
-			return renderReport(reportId, params, "Cashier Shift Report - " + temp, response);
-
-		} else if (settings.getDefaultRevenueReportId() != null
-		        && reportId == settings.getDefaultRevenueReportId().intValue()) {
-
-			try {
-				SimpleDateFormat dateformat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-				String startdate = request.getParameter("revenueDateStart");
-				Date sdate = dateformat.parse(startdate);
-				params.put("beginDate", sdate);
-				String enddate = request.getParameter("revenueDateEnd");
-				Date edate = dateformat.parse(enddate);
-				params.put("endDate", edate);
-				String loc =
-				        Context.getAuthenticatedUser().getUserProperty(OpenmrsConstants.USER_PROPERTY_DEFAULT_LOCATION);
-				Location ltemp = Context.getLocationService().getLocation(Integer.parseInt(loc));
-				params.put("locationId", loc);
-				params.put("locationName", ltemp.getName());
-				return renderReport(reportId, params, "Cashier Revenue Report", response);
-			} catch (Exception ex) {
-				LOG.error("Error while procession revenue report: bad date format", ex);
-			}
-
+		CashierSettings settings = ModuleSettings.loadSettings();
+		if (settings.getDefaultShiftReportId() != null && reportId == settings.getDefaultShiftReportId()) {
+			return renderShiftReport(reportId, request, response);
+		} else if (settings.getDepartmentCollectionsReportId() != null
+		        && reportId == settings.getDepartmentCollectionsReportId()) {
+			return renderDateRangeReport(reportId, "Department Collections", request, response);
+		} else if (settings.getDepartmentRevenueReportId() != null
+		        && reportId == settings.getDepartmentRevenueReportId()) {
+			return renderDateRangeReport(reportId, "Department Revenue", request, response);
+		} else if (settings.getDailyShiftSummaryReportId() != null
+		        && reportId == settings.getDailyShiftSummaryReportId()) {
+			return renderDateRangeReport(reportId, "Daily Shift Summary", request, response);
+		} else if (settings.getShiftSummaryReportId() != null
+		        && reportId == settings.getShiftSummaryReportId()) {
+			return renderDateRangeReport(reportId, "Shift Summary", request, response);
 		}
+
 		return null;
+	}
+
+	private String renderShiftReport(int reportId, WebRequest request, HttpServletResponse response) throws IOException {
+		int timesheetId;
+		String temp = request.getParameter("timesheetId");
+		if (!StringUtils.isEmpty(temp) && StringUtils.isNumeric(temp)) {
+			timesheetId = Integer.parseInt(temp);
+		} else {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The timesheet id ('" + temp
+			        + "') must be defined and be numeric.");
+			return null;
+		}
+
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		params.put("timesheetId", timesheetId);
+
+		return renderReport(reportId, params, "Cashier Shift Report - " + temp, response);
+	}
+
+	private String renderDateRangeReport(int reportId, String reportName, WebRequest request,
+	        HttpServletResponse response) throws IOException {
+		HashMap<String, Object> params = new HashMap<String, Object>();
+		if (parseDateRange(reportId, request, response, params)) {
+			String format = request.getParameter("format");
+			if (StringUtils.isEmpty(format)) {
+				format = "pdf";
+			}
+
+			return renderReport(reportId, params, reportName, response, format);
+		} else {
+			return null;
+		}
+	}
+
+	private Boolean parseDateRange(int reportId, WebRequest request, HttpServletResponse response,
+	        Map<String, Object> params) throws IOException {
+		Date beginDate = null, endDate = null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		String temp = request.getParameter("beginDate");
+		if (!StringUtils.isEmpty(temp)) {
+			try {
+				beginDate = dateFormat.parse(temp);
+			} catch (Exception ex) {
+				// Whatevs... dealing with stupid checked exceptions
+			}
+		}
+
+		temp = request.getParameter("endDate");
+		if (!StringUtils.isEmpty(temp)) {
+			try {
+				endDate = dateFormat.parse(temp);
+			} catch (Exception ex) {
+				// Whatevs... dealing with stupid checked exceptions
+			}
+		}
+
+		if (beginDate == null || endDate == null) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The begin and end dates must be defined.");
+
+			return false;
+		}
+
+		// Get the report definition and check to see if the parameter is named beginDate or startDate
+		String beginParameterName = "beginDate";
+		JasperReportService reportService = Context.getService(JasperReportService.class);
+		JasperReport report = reportService.getJasperReport(reportId);
+		for (ReportParameter parameter : report.getParameters()) {
+			if (StringUtils.equalsIgnoreCase(parameter.getName(), "startDate")) {
+				beginParameterName = parameter.getName();
+				break;
+			}
+		}
+
+		params.put(beginParameterName, beginDate);
+		params.put("endDate", endDate);
+
+		return true;
 	}
 }

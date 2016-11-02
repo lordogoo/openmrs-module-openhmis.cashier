@@ -77,7 +77,6 @@ public class ReceiptController {
 
 		HashMap<String, Object> params = new HashMap<String, Object>();
 		params.put("billId", bill.getId());
-		params.put("billLocation", bill.getLocation());
 
 		try {
 			ReportGenerator.generateHtmlAndWriteToResponse(report, params, response);

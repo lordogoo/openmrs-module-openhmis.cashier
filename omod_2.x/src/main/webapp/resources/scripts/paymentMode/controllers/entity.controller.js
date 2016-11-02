@@ -23,15 +23,13 @@
     function PaymentModeController($stateParams, $injector, $scope, $filter, EntityRestFactory,
                                    PaymentModeModel, PaymentModeFunctions, EntityFunctions, PaymentModeRestfulService) {
         var self = this;
-
-        var module_name = 'cashier';
         var entity_name_message_key = "openhmis.cashier.paymentMode.name";
-        var cancel_page = 'entities.page';
-        var rest_entity_name = emr.message("openhmis.cashier.paymentMode.rest_name");
+        var REST_ENTITY_NAME = "paymentMode";
 
         // @Override
         self.setRequiredInitParameters = self.setRequiredInitParameters || function() {
-                self.bindBaseParameters(module_name, rest_entity_name, entity_name_message_key, cancel_page);
+                self.checkPrivileges(TASK_MANAGE_METADATA);
+                self.bindBaseParameters(CASHIER_MODULE_NAME, REST_ENTITY_NAME, entity_name_message_key, RELATIVE_CANCEL_PAGE_URL);
             };
 
         /**
@@ -44,21 +42,27 @@
 
                 // open dialog box to add an attribute type
                 $scope.addAttributeType = function () {
-                    PaymentModeFunctions.addAttributeType($scope);
+	                $scope.editAttributeTypeTitle = '';
+	                $scope.addAttributeTypeTitle = emr.message('openhmis.cashier.paymentMode.add.attributeType');
+                    EntityFunctions.addAttributeType($scope);
+                    EntityFunctions.disableBackground();
                 }
 
                 // deletes an attribute type
                 $scope.removeAttributeType = function (attributeType) {
-                    PaymentModeFunctions.removeAttributeType(attributeType, $scope.entity.attributeTypes);
+	                EntityFunctions.removeAttributeType(attributeType, $scope.entity.attributeTypes);
                 }
 
                 // open dialog box to edit an attribute type
                 $scope.editAttributeType = function (attributeType) {
-                    PaymentModeFunctions.editAttributeType(attributeType, $scope);
+	                $scope.editAttributeTypeTitle = emr.message('openhmis.cashier.paymentMode.edit.attributeType');
+	                $scope.addAttributeTypeTitle = '';
+	                EntityFunctions.editAttributeType(attributeType, $scope);
+                    EntityFunctions.disableBackground();
                 }
 
                 // retrieve and load format fields..
-                PaymentModeRestfulService.loadFormatFields(module_name, self.onLoadFormatFieldsSuccessful);
+                PaymentModeRestfulService.loadFormatFields(CASHIER_MODULE_NAME, self.onLoadFormatFieldsSuccessful);
             };
 
         /**
@@ -89,10 +93,19 @@
                     return false;
                 }
 
-                PaymentModeFunctions.removeAttributeTypesTemporaryId($scope.entity.attributeTypes);
+		        // remove temporarily assigned ids from the attribute type array lists.
+		        self.removeTemporaryIds();
 
                 return true;
             }
+
+	    /**
+	     * Removes the temporarily assigned unique ids before POSTing data
+	     * @type {Function}
+	     */
+	    self.removeTemporaryIds = self.removeTemporaryIds || function () {
+			    EntityFunctions.removeTemporaryId($scope.entity.attributeTypes);
+		    }
 
         // @Override
         self.onChangeEntityError = self.onChangeEntityError || function (error) {

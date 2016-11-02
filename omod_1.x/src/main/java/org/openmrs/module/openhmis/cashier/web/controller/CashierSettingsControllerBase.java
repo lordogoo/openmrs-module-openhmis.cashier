@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Set;
 
 /**
  * Base Controller to manage the settings pages.
@@ -41,7 +40,8 @@ public abstract class CashierSettingsControllerBase {
 
 		modelMap.addAttribute("reports", reportService.getJasperReports());
 		modelMap.addAttribute("cashierSettings", ModuleSettings.loadSettings());
-		//HeaderController.render(modelMap, request);
+
+		HeaderController.render(modelMap, request);
 	}
 
 	@RequestMapping(method = RequestMethod.POST)

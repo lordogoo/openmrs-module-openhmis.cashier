@@ -50,7 +50,6 @@ public class BillLineItemResource extends BaseRestDataResource<BillLineItem> {
 			description.addProperty("priceName");
 			description.addProperty("priceUuid");
 			description.addProperty("lineItemOrder");
-			description.addProperty("removeItemOrder");
 		}
 		return description;
 	}
